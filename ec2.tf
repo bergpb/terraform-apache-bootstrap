@@ -12,14 +12,7 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "server" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
-  user_data     = <<-EOF
-    #!/bin/bash
-    apt-get update
-    apt-get install apache2 -y
-    systemctl start apache2
-    systemctl enable apache2
-    echo -e "<h1>Deployed by Terraform</h1>\nYou're on host: $(hostname)" > /var/www/html/index.html
-  EOF
+  user_data     = file("scripts/bootstrap.sh")
 
   tags = {
     Name        = var.name
